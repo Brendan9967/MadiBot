@@ -19,6 +19,6 @@ client.addListener('message', function (from, to, message) {
 	}
 });
 
-addListener('error', function(message) {
-	conclient.sole.log('error: ', message);
+client.addListener('error', function(message) {
+	console.log('error: ', message);
 });
