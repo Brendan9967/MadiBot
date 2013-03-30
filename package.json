@@ -1,0 +1,19 @@
+{
+	"name": "MadiBot",
+	"author": "Madison Tries <https://github.com/Phalanxia>",
+	"description": "A bot that does things",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Phalanxia/MadiBot.git"
+	},
+	"keywords": [
+		"bot"
+	],
+	"dependencies": {
+		"node-irc": "https://github.com/martynsmith/node-irc"
+	},
+	"license": "Apache License, Version 2.0",
+	"engines": {
+		"node": ">=0.10.1"
+	}
+}
