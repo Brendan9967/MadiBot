@@ -12,7 +12,7 @@ var client = new ircLib.Client(config.server, config.botname , {
 client.addListener('message', function (from, to, message) {
 	console.log(to + ' => ' + from + ': ' + message);
 	function mE(isadmin,inputMessage,inputWant){
-		if (isadmin === true && from != config.admin){
+		if (isadmin === true && from != config.admins){
 			return false;
 		} else {
 			if (message.indexOf(config.commandchar + inputWant) > -1){
@@ -30,13 +30,15 @@ client.addListener('message', function (from, to, message) {
 	} else if (mE(false,message,"help")){
 		client.notice(from,"meow, time, help");
 	} else if (mE(true,message,"quit")){
-		// Not Yet
 	} else if (mE(true,message,"join")){
 		var cleaned = message.substring(5, message.length);
 		client.join(cleaned);
-		chans.push(cleaned);
 	} else if (mE(true,message,"part")){
-		// Idk How
+		var cleaned = message.substring(6, message.length);
+		client.part(cleaned);
+	} else if (mE(true,message,"say")){
+		var say = message.substring(5, message.length);
+		client.say(to,say);
 	} else if (mE(false,message,"time")){
 		var nowtime = new Date();
 		client.say(to,nowtime);
