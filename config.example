@@ -1,0 +1,12 @@
+config = {
+	botname: 'Bot Name',
+	username: 'Username',
+	password: 'Password',
+	realname: 'Real Name',
+	channels: ['#example'],
+	server: '',
+	commandchar: '*',
+	admins: 'Your Nick Probably'
+};
+
+module.exports = config;
