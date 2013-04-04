@@ -6,7 +6,7 @@ config = {
 	channels: ['#example'],
 	server: '',
 	commandchar: '*',
-	admins: 'Your Nick Probably'
+	admins: ['Your Nick Probably']
 };
 
 module.exports = config;

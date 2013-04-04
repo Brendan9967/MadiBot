@@ -12,5 +12,6 @@ logs
 results
 
 config.js
+twitcredentials.js
 npm-debug.log
 node_modules
