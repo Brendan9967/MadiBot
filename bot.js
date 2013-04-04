@@ -39,27 +39,27 @@ function inArray(needle, haystack) { // Thanks to http://stackoverflow.com/a/784
 	return false;
 }
 
-function mE(isadmin,exact,inputMessage,inputWant){
-	if (isadmin === true && inArray(from,config.admins) == false){
-		return false;
-	} else {
-		if (message.indexOf(config.commandchar + inputWant) > -1 && message.startsWith(config.commandchar + inputWant)){
-			if (exact === true && message != config.commandchar + inputWant){
-				return false;
-			} else {
-				return true;
-			}
-		} else {
-			return false;
-		}
-	}
-}
-
 // Ccommands
 
 client.addListener('message', function (from, to, message) {
 
 	console.log(to + ' => ' + from + ': ' + message);
+
+	function mE(isadmin,exact,inputMessage,inputWant){
+		if (isadmin === true && inArray(from,config.admins) == false){
+			return false;
+		} else {
+			if (message.indexOf(config.commandchar + inputWant) > -1 && message.startsWith(config.commandchar + inputWant)){
+				if (exact === true && message != config.commandchar + inputWant){
+					return false;
+				} else {
+					return true;
+				}
+			} else {
+				return false;
+			}
+		}
+	}
 
 	if (mE(false,true,message,"meow")){
 		client.say(to,"nyan~");
