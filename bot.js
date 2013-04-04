@@ -23,7 +23,7 @@ var t = new twitter({
 });
 
 
-// Commands
+// Command Handlers
 
 if (typeof String.prototype.startsWith != 'function') { // Thanks to http://stackoverflow.com/a/646643/2152712
 	String.prototype.startsWith = function (str){
@@ -39,25 +39,28 @@ function inArray(needle, haystack) { // Thanks to http://stackoverflow.com/a/784
 	return false;
 }
 
-// Handle commands and messages
-
-client.addListener('message', function (from, to, message) {
-	console.log(to + ' => ' + from + ': ' + message);
-	function mE(isadmin,exact,inputMessage,inputWant){
-		if (isadmin === true && inArray(from,config.admins) == false){
-			return false;
-		} else {
-			if (message.indexOf(config.commandchar + inputWant) > -1 && message.startsWith(config.commandchar + inputWant)){
-				if (exact === true && message != config.commandchar + inputWant){
-					return false;
-				} else {
-					return true;
-				}
-			} else {
+function mE(isadmin,exact,inputMessage,inputWant){
+	if (isadmin === true && inArray(from,config.admins) == false){
+		return false;
+	} else {
+		if (message.indexOf(config.commandchar + inputWant) > -1 && message.startsWith(config.commandchar + inputWant)){
+			if (exact === true && message != config.commandchar + inputWant){
 				return false;
+			} else {
+				return true;
 			}
+		} else {
+			return false;
 		}
 	}
+}
+
+// Ccommands
+
+client.addListener('message', function (from, to, message) {
+
+	console.log(to + ' => ' + from + ': ' + message);
+
 	if (mE(false,true,message,"meow")){
 		client.say(to,"nyan~");
 	} else if (mE(false,true,message,"about")){
@@ -66,6 +69,7 @@ client.addListener('message', function (from, to, message) {
 	} else if (mE(false,true,message,"help")){
 		client.notice(from,"meow, now, help, say, act, moo, snug | Admin Commands: join, part, say-a, act-a, tweet");
 	} else if (mE(true,true,message,"quit")){
+		// How do
 	} else if (mE(true,false,message,"join")){
 		var cleaned = message.substring(6, message.length);
 		client.join(cleaned);
