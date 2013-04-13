@@ -22,7 +22,6 @@ var t = new twitter({
 	access_token_secret: twit.access_token_secret
 });
 
-
 // Command Handlers
 
 if (typeof String.prototype.startsWith != 'function') { // Thanks to http://stackoverflow.com/a/646643/2152712
@@ -39,72 +38,84 @@ function inArray(needle, haystack) { // Thanks to http://stackoverflow.com/a/784
 	return false;
 }
 
-// Ccommands
+// Commands
 
 client.addListener('message', function (from, to, message) {
 
 	console.log(to + ' => ' + from + ': ' + message);
 
-	function mE(isadmin,exact,inputMessage,inputWant){
-		if (isadmin === true && inArray(from,config.admins) == false){
-			return false;
-		} else {
-			if (message.indexOf(config.commandchar + inputWant) > -1 && message.startsWith(config.commandchar + inputWant)){
-				if (exact === true && message != config.commandchar + inputWant){
-					return false;
+	var adminCommands = {
+		quit : function () {
+			setTimeout(function() {
+				console.log('Exiting.');
+				process.exit(0);
+			}, 100); },
+		join : function (target,message) {
+			client.join(target); },
+		part : function (target,message) {
+			client.part(target); },
+		tweet : function (target,message) {
+			t.updateStatus(message, function(err, data){
+				if (err) {
+					client.notice(from,'Tweeting Failed: ' + err);
 				} else {
-					return true;
+					client.notice(from,'Tweeted <3');
 				}
+			}); },
+		saya: function (target,message) {
+			client.say(target,message.substring(target.length + 1,message.length)); },
+		acta: function (target,message) {
+			client.action(target,message.substring(target.length + 1,message.length)); }
+	};
+
+	var publicCommands = {
+		meow : function () { 
+			client.say(to,'nyan~'); },
+		lick : function (target,message) { 
+			client.action(to, 'licks ' + target + ' ;3'); },
+		help : function () {
+			client.notice(from,'meow, now, help, say, act, moo, snug | Admin Commands: join, part, say-a, act-a, tweet'); },
+		about : function () {
+			client.say(to,'A bot made by Madison Tries to do things for her because she is lazy.');
+			client.say(to,'Source available at: https://github.com/Phalanxia/MadiBot/'); },
+		say: function (target,message) {
+			client.say(to,message.substring(target.length + 1,message.length)); },
+		act: function (target,message) { 
+			client.action(to,message.substring(target.length + 1,message.length)); },
+		snug : function (target,message) { 
+			client.action(to, 'snuggles ' + target + ' <3 ;3'); },
+		now : function () {
+			var nowtime = new Date();
+			client.say(to,nowtime); },
+		moo : function () {
+			client.action(to,'licks ' + from + ' ;3'); },
+		lick : function (target,message) {
+			client.action(to, 'licks ' + target + ' ;3'); },
+		poke : function (target,message) {
+			client.action(to, 'pokes ' + target); }
+	};
+
+	if (message.startsWith(config.commandchar)){
+		console.log('Command Detected');
+		message = message.substring(1, message.length);
+		var parsedCommand = message.split(' ');
+		var commandName = parsedCommand[0];
+		var noCommand = message.substring(message.length, commandName.length + 1);
+		if (typeof publicCommands[commandName] != 'undefined'){
+			publicCommands[commandName](parsedCommand[1],noCommand);
+		} else if (inArray(from,config.admins) == true){ // Is the user an admin? Check for admin commands!
+			if (typeof adminCommands[commandName] != 'undefined'){
+				adminCommands[commandName](parsedCommand[1],noCommand);
 			} else {
-				return false;
+				return;
 			}
+		} else {
+			 return;
 		}
+	} else {
+		return;
 	}
 
-	if (mE(false,true,message,"meow")){
-		client.say(to,"nyan~");
-	} else if (mE(false,true,message,"about")){
-		client.say(to,"A bot made by Madison Tries to do things for her because she is lazy.");
-		client.say(to,"Source available at: https://github.com/Phalanxia/MadiBot/");
-	} else if (mE(false,true,message,"help")){
-		client.notice(from,"meow, now, help, say, act, moo, snug | Admin Commands: join, part, say-a, act-a, tweet");
-	} else if (mE(true,true,message,"quit")){
-		// How do
-	} else if (mE(true,false,message,"join")){
-		var cleaned = message.substring(6, message.length);
-		client.join(cleaned);
-	} else if (mE(true,false,message,"part")){
-		var cleaned = message.substring(6, message.length);
-		client.part(cleaned);
-	} else if (mE(true,false,message,"tweet")){
-		var toPost = message.substring(message.length, 7);
-		t.updateStatus(toPost, function(err, data){
-			if (err) console.log('Tweeting Failed: ' + err);
-			else console.log('Tweeted! <3');
-		});
-	} else if (mE(true,false,message,"say-a ")){
-		var splitMessage = message.split(" ");
-		var parsedmessage = splitMessage[1].length + splitMessage[0].length + 2;
-		client.say(splitMessage[1],message.substring(parsedmessage,message.length));
-	} else if (mE(false,false,message,"say ")){
-		var say = message.substring(message.length, 5);
-		client.say(to,say);
-	} else if (mE(true,false,message,"act-a ")){
-		var splitMessage = message.split(" ");
-		var parsedmessage = splitMessage[1].length + splitMessage[0].length + 2;
-		client.action(splitMessage[1],message.substring(parsedmessage,message.length));
-	} else if (mE(true,false,message,"act ")){
-		var say = message.substring(message.length, 5);
-		client.action(to,say);
-	} else if (mE(true,false,message,"snug ")){
-		var target = message.substring(message.length, 6);
-		client.action(to, "snuggles " + target + " ;3");
-	} else if (mE(false,true,message,"now")){
-		var nowtime = new Date();
-		client.say(to,nowtime);
-	} else if (mE(false,false,message,"moo")){
-		client.action(to,'licks ' + from + ";3");
-	}
 });
 
 // Errors
