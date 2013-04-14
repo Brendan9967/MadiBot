@@ -58,8 +58,10 @@ client.addListener('message', function (from, to, message) {
 			t.updateStatus(message, function(err, data){
 				if (err) {
 					client.notice(from,'Tweeting Failed: ' + err);
+					console.log('Tweeting Failed:' + err);
 				} else {
 					client.notice(from,'Tweeted <3');
+					console.log('Tweeted <3');
 				}
 			}); },
 		saya: function (target,message) {
@@ -71,10 +73,8 @@ client.addListener('message', function (from, to, message) {
 	var publicCommands = {
 		meow : function () { 
 			client.say(to,'nyan~'); },
-		lick : function (target,message) { 
-			client.action(to, 'licks ' + target + ' ;3'); },
 		help : function () {
-			client.notice(from,'meow, now, help, say, act, moo, snug | Admin Commands: join, part, say-a, act-a, tweet'); },
+			client.notice(from,'meow, now, help, say, act, moo, snug, lick, poke | Admin Commands: join, part, quit, saya, acta, tweet'); },
 		about : function () {
 			client.say(to,'A bot made by Madison Tries to do things for her because she is lazy.');
 			client.say(to,'Source available at: https://github.com/Phalanxia/MadiBot/'); },
