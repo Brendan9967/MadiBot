@@ -106,14 +106,8 @@ client.addListener('message', function (from, to, message) {
 		} else if (inArray(from,config.admins) == true){ // Is the user an admin? Check for admin commands!
 			if (typeof adminCommands[commandName] != 'undefined'){
 				adminCommands[commandName](parsedCommand[1],noCommand);
-			} else {
-				return;
 			}
-		} else {
-			 return;
 		}
-	} else {
-		return;
 	}
 
 });
