@@ -1,0 +1,22 @@
+config = {
+	// The nick the bot uses in IRC
+	botname: '',
+	// nickserv username
+	username: '',
+	// nickserv password
+	password: '',
+	// Real name
+	realname: '',
+	// The IRC servers
+	channels: [''],
+	// The IRC server
+	server: '',
+	// The command char for IRC commands
+	commandchar: '',
+	// Who can do admin commands
+	admins: [''],
+	// The location you want to log to
+	logging_directory: ''
+};
+
+module.exports = config;

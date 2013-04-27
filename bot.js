@@ -1,5 +1,8 @@
-var ircLib = require('irc'), fs = require('fs'), http = require('http'), twitter = require('ntwitter');
-
+var ircLib = require('irc'),
+	fs = require('fs'),
+	http = require('http'),
+	twitter = require('ntwitter'),
+	xml2js = require('xml2js');
 // Config
 
 var config = require('./config.js');
@@ -10,6 +13,16 @@ var client = new ircLib.Client(config.server, config.botname , {
 	password: config.password,
 	realName: config.realname
 });
+
+var logging = false;
+
+// Logging
+
+function log(name,content){
+	fs.appendFile(config.logging_directory + name + ".txt",content + "\r\n", function (err) {
+		if (err) throw err;
+	});
+}
 
 // Twitter
 
@@ -44,6 +57,10 @@ client.addListener('message', function (from, to, message) {
 
 	console.log(to + ' => ' + from + ': ' + message);
 
+	if (logging){
+		log(to,from + " => " + message);
+	}
+
 	var adminCommands = {
 		quit : function () {
 			setTimeout(function() {
@@ -67,14 +84,21 @@ client.addListener('message', function (from, to, message) {
 		saya: function (target,message) {
 			client.say(target,message.substring(target.length + 1,message.length)); },
 		acta: function (target,message) {
-			client.action(target,message.substring(target.length + 1,message.length)); }
+			client.action(target,message.substring(target.length + 1,message.length)); },
+		togglelogging: function() {
+			if (logging){
+				logging = false;
+			} else {
+				logging = true;
+			} 
+		}	
 	};
 
 	var publicCommands = {
-		meow : function () { 
+		meow : function () {
 			client.say(to,'nyan~'); },
 		help : function () {
-			client.notice(from,'meow, now, help, say, act, moo, snug, lick, poke | Admin Commands: join, part, quit, saya, acta, tweet'); },
+			client.notice(from,'meow, now, help, say, act, moo, snug, lick, poke | Admin Commands: join, part, quit, saya, acta, tweet, togglelogging'); },
 		about : function () {
 			client.say(to,'A bot made by Madison Tries to do things for her because she is lazy.');
 			client.say(to,'Source available at: https://github.com/Phalanxia/MadiBot/'); },
@@ -92,7 +116,8 @@ client.addListener('message', function (from, to, message) {
 		lick : function (target,message) {
 			client.action(to, 'licks ' + target + ' ;3'); },
 		poke : function (target,message) {
-			client.action(to, 'pokes ' + target); }
+			client.action(to, 'pokes ' + target);
+		}
 	};
 
 	if (message.startsWith(config.commandchar)){
@@ -101,6 +126,7 @@ client.addListener('message', function (from, to, message) {
 		var parsedCommand = message.split(' ');
 		var commandName = parsedCommand[0];
 		var noCommand = message.substring(message.length, commandName.length + 1);
+		message = message.toLowerCase();
 		if (typeof publicCommands[commandName] != 'undefined'){
 			publicCommands[commandName](parsedCommand[1],noCommand);
 		} else if (inArray(from,config.admins) == true){ // Is the user an admin? Check for admin commands!
